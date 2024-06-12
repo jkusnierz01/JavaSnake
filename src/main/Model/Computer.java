@@ -1,9 +1,16 @@
 package main.Model;
 
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import static main.Frame.Constants.POINT_SIZE;
 
 public class Computer extends DefaultSnake {
     private boolean stopped;
+    private boolean frozen;
+    private Timer freezeTimer;
 
     public Computer() {
         init();
@@ -20,6 +27,7 @@ public class Computer extends DefaultSnake {
         upDirection = false;
         downDirection = false;
         stopped = false;
+        frozen = false;
     }
 
     public int[] getX() {
@@ -31,7 +39,7 @@ public class Computer extends DefaultSnake {
     }
 
     public void move() {
-        if (!stopped) {
+        if (!stopped && !frozen) {
             for (int i = dots; i > 0; i--) {
                 x[i] = x[i - 1];
                 y[i] = y[i - 1];
@@ -56,7 +64,6 @@ public class Computer extends DefaultSnake {
     }
 
     public void updateDirection(int fruitX, int fruitY, int[] obstacleX, int[] obstacleY) {
-        // Check if the next move will hit an obstacle
         if (willHitObstacle(obstacleX, obstacleY)) {
             avoidObstacle(obstacleX, obstacleY);
         } else {
@@ -161,5 +168,40 @@ public class Computer extends DefaultSnake {
 
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
+    }
+
+    public void freeze() {
+        frozen = true;
+        freezeTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frozen = false;
+                freezeTimer.stop();
+            }
+        });
+        freezeTimer.start();
+    }
+
+    public void checkIfCollisionWithOtherSnakes(Player player, ArrayList<Computer> computers) {
+        // Sprawdzanie kolizji z graczem
+        for (int i = 0; i < player.dots; i++) {
+            if ((x[0] == player.getX()[i]) && (y[0] == player.getY()[i])) {
+                freeze();
+                break;
+            }
+        }
+
+        // Sprawdzanie kolizji z innymi komputerowymi wężami
+        for (Computer other : computers) {
+            if (other != this) {
+                for (int i = 0; i < other.dots; i++) {
+                    if ((x[0] == other.getX()[i]) && (y[0] == other.getY()[i])) {
+                        freeze();
+                        other.freeze();
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
