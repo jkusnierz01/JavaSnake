@@ -1,3 +1,6 @@
 jedrek 2
 ja 4
 ez 3
+x 0
+jedrzej 3
+x 0

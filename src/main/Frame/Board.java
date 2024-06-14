@@ -62,6 +62,12 @@ public class Board extends JPanel implements ActionListener {
     private Image ball, fruit, head, frog, compball;
 
     /**
+     * Counter to control frog movement frequency.
+     */
+    private int frogMoveCounter = 0;
+    private static final int FROG_MOVE_DELAY = 2; // Zmniejszenie wartości, aby żaba przeskakiwała częściej
+
+    /**
      * Constructor initializes the game board.
      */
     public Board() {
@@ -129,11 +135,15 @@ public class Board extends JPanel implements ActionListener {
      * Randomly positions the frog on the board.
      */
     public void locateFrog() {
-        this.myFrong = new Frog();
-        int r = (int) (Math.random() * RAND_POS);
-        this.myFrong.setFrogX(r * POINT_SIZE);
-        r = (int) (Math.random() * RAND_POS);
-        this.myFrong.setFrogY(r * POINT_SIZE);
+        boolean onSnake;
+        do {
+            this.myFrong = new Frog(); // Dodana inicjalizacja obiektu myFrong
+            int r = (int) (Math.random() * RAND_POS);
+            this.myFrong.setFrogX(r * POINT_SIZE);
+            r = (int) (Math.random() * RAND_POS);
+            this.myFrong.setFrogY(r * POINT_SIZE);
+            onSnake = isFrogOnSnake(myFrong.getFrogX(), myFrong.getFrogY());
+        } while (onSnake);
     }
 
     /**
@@ -234,15 +244,33 @@ public class Board extends JPanel implements ActionListener {
      */
     public void checkFrog() {
         if ((player.getX()[0] == myFrong.getFrogX()) && (player.getY()[0] == myFrong.getFrogY())) {
-            ++player.dots;
+            player.dots += 2;
             locateFrog();
         }
         for (Computer computer : computers) {
             if ((computer.getX()[0] == myFrong.getFrogX()) && (computer.getY()[0] == myFrong.getFrogY())) {
-                ++computer.dots;
+                computer.dots += 2;
                 locateFrog();
             }
         }
+    }
+
+    private boolean isFrogOnSnake(int frogX, int frogY) {
+        // Check if the frog is on the player snake
+        for (int i = 0; i < player.dots; i++) {
+            if (player.getX()[i] == frogX && player.getY()[i] == frogY) {
+                return true;
+            }
+        }
+        // Check if the frog is on any computer snake
+        for (Computer computer : computers) {
+            for (int i = 0; i < computer.dots; i++) {
+                if (computer.getX()[i] == frogX && computer.getY()[i] == frogY) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -340,7 +368,12 @@ public class Board extends JPanel implements ActionListener {
             });
             Thread frogThread = new Thread(() -> {
                 checkFrog();
-                this.myFrong.move();
+                if (frogMoveCounter >= FROG_MOVE_DELAY) {
+                    this.myFrong.move();
+                    frogMoveCounter = 0;
+                } else {
+                    frogMoveCounter++;
+                }
             });
             Thread computerThread = new Thread(() -> {
                 checkComputerCollision();
