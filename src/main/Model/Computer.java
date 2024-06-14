@@ -7,15 +7,24 @@ import java.util.ArrayList;
 
 import static main.Frame.Constants.POINT_SIZE;
 
+/**
+ * The Computer class represents an AI-controlled snake in the game.
+ */
 public class Computer extends DefaultSnake {
     private boolean stopped;
     private boolean frozen;
     private Timer freezeTimer;
 
+    /**
+     * Constructs a Computer object and initializes it.
+     */
     public Computer() {
         init();
     }
 
+    /**
+     * Initializes the computer snake with default values.
+     */
     public void init() {
         dots = 3;
         for (int i = 0; i < dots; i++) {
@@ -30,14 +39,27 @@ public class Computer extends DefaultSnake {
         frozen = false;
     }
 
+    /**
+     * Returns the x coordinates of the computer snake.
+     *
+     * @return an array of x coordinates
+     */
     public int[] getX() {
         return x;
     }
 
+    /**
+     * Returns the y coordinates of the computer snake.
+     *
+     * @return an array of y coordinates
+     */
     public int[] getY() {
         return y;
     }
 
+    /**
+     * Moves the computer snake if it is not stopped or frozen.
+     */
     public void move() {
         if (!stopped && !frozen) {
             for (int i = dots; i > 0; i--) {
@@ -63,6 +85,14 @@ public class Computer extends DefaultSnake {
         }
     }
 
+    /**
+     * Updates the direction of the computer snake towards the fruit while avoiding obstacles.
+     *
+     * @param fruitX     the x coordinate of the fruit
+     * @param fruitY     the y coordinate of the fruit
+     * @param obstacleX  the x coordinates of the obstacles
+     * @param obstacleY  the y coordinates of the obstacles
+     */
     public void updateDirection(int fruitX, int fruitY, int[] obstacleX, int[] obstacleY) {
         if (willHitObstacle(obstacleX, obstacleY)) {
             avoidObstacle(obstacleX, obstacleY);
@@ -91,6 +121,13 @@ public class Computer extends DefaultSnake {
         }
     }
 
+    /**
+     * Checks if the computer snake will hit an obstacle in its next move.
+     *
+     * @param obstacleX the x coordinates of the obstacles
+     * @param obstacleY the y coordinates of the obstacles
+     * @return true if the computer snake will hit an obstacle, false otherwise
+     */
     private boolean willHitObstacle(int[] obstacleX, int[] obstacleY) {
         int nextX = x[0];
         int nextY = y[0];
@@ -113,6 +150,12 @@ public class Computer extends DefaultSnake {
         return false;
     }
 
+    /**
+     * Adjusts the direction of the computer snake to avoid obstacles.
+     *
+     * @param obstacleX the x coordinates of the obstacles
+     * @param obstacleY the y coordinates of the obstacles
+     */
     private void avoidObstacle(int[] obstacleX, int[] obstacleY) {
         if (leftDirection || rightDirection) {
             if (!isObstacleAt(x[0], y[0] - POINT_SIZE, obstacleX, obstacleY)) {
@@ -137,6 +180,15 @@ public class Computer extends DefaultSnake {
         }
     }
 
+    /**
+     * Checks if there is an obstacle at the specified coordinates.
+     *
+     * @param checkX     the x coordinate to check
+     * @param checkY     the y coordinate to check
+     * @param obstacleX  the x coordinates of the obstacles
+     * @param obstacleY  the y coordinates of the obstacles
+     * @return true if there is an obstacle at the specified coordinates, false otherwise
+     */
     private boolean isObstacleAt(int checkX, int checkY, int[] obstacleX, int[] obstacleY) {
         for (int i = 0; i < obstacleX.length; i++) {
             if (checkX == obstacleX[i] && checkY == obstacleY[i]) {
@@ -146,6 +198,9 @@ public class Computer extends DefaultSnake {
         return false;
     }
 
+    /**
+     * Reverses the direction of the computer snake.
+     */
     public void reverseDirection() {
         if (leftDirection) {
             leftDirection = false;
@@ -162,14 +217,27 @@ public class Computer extends DefaultSnake {
         }
     }
 
+    /**
+     * Checks if the computer snake is stopped.
+     *
+     * @return true if the computer snake is stopped, false otherwise
+     */
     public boolean isStopped() {
         return stopped;
     }
 
+    /**
+     * Sets the stopped state of the computer snake.
+     *
+     * @param stopped the new stopped state
+     */
     public void setStopped(boolean stopped) {
         this.stopped = stopped;
     }
 
+    /**
+     * Freezes the computer snake for a specified duration.
+     */
     public void freeze() {
         frozen = true;
         freezeTimer = new Timer(5000, new ActionListener() {
@@ -182,6 +250,12 @@ public class Computer extends DefaultSnake {
         freezeTimer.start();
     }
 
+    /**
+     * Checks if the computer snake collides with the player or other computer snakes.
+     *
+     * @param player    the player snake
+     * @param computers the list of computer snakes
+     */
     public void checkIfCollisionWithOtherSnakes(Player player, ArrayList<Computer> computers) {
         // Sprawdzanie kolizji z graczem
         for (int i = 0; i < player.dots; i++) {

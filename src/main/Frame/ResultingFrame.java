@@ -8,12 +8,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-
+/**
+ * The ResultingFrame class represents a JFrame where the player can input their name
+ * to save their result.
+ */
 public class ResultingFrame extends JFrame implements ActionListener {
     private final JTextField name;
     private final int result;
     private final JButton confirmButton;
 
+    /**
+     * Constructs a ResultingFrame object with the specified result.
+     *
+     * @param result the result of the player
+     */
     public ResultingFrame(int result) {
         setSize(300, 300);
         setLayout(new GridLayout(3, 1));
@@ -29,7 +37,12 @@ public class ResultingFrame extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-
+    /**
+     * Handles the action event when the confirm button is pressed.
+     * Saves the result with the player's name and exits the application.
+     *
+     * @param e the ActionEvent triggered by the confirm button
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();

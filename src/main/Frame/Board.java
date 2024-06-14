@@ -15,21 +15,62 @@ import java.util.ArrayList;
 
 import static main.Frame.Constants.*;
 
+/**
+ * Board class represents the game board for the snake game.
+ * It extends JPanel and implements ActionListener to handle game updates.
+ */
 public class Board extends JPanel implements ActionListener {
+    /**
+     * Indicates whether the game is currently active.
+     */
     public boolean inGame = true;
+
+    /**
+     * Player object representing the human player.
+     */
     private Player player;
+
+    /**
+     * Fruit object representing the fruit to be collected.
+     */
     private Fruit myFruit;
+
+    /**
+     * Frog object representing the frog to be collected.
+     */
     private Frog myFrong;
+
+    /**
+     * List of Computer objects representing AI-controlled players.
+     */
     private ArrayList<Computer> computers;
+
+    /**
+     * Arrays to hold the x and y coordinates of obstacles.
+     */
     private int obstacleX[] = new int[4];
     private int obstacleY[] = new int[4];
+
+    /**
+     * Timer object to control game updates.
+     */
     private Timer timer;
+
+    /**
+     * Images for various game elements.
+     */
     private Image ball, fruit, head, frog, compball;
 
+    /**
+     * Constructor initializes the game board.
+     */
     public Board() {
         buildBoard();
     }
 
+    /**
+     * Sets up the game board.
+     */
     public void buildBoard() {
         addKeyListener(new MyAdapter());
         setBackground(Color.black);
@@ -39,6 +80,9 @@ public class Board extends JPanel implements ActionListener {
         gameInitialize();
     }
 
+    /**
+     * Loads images for the game elements.
+     */
     public void loadImages() {
         ImageIcon _ball = new ImageIcon("src/images/ball.png");
         ball = _ball.getImage();
@@ -56,6 +100,9 @@ public class Board extends JPanel implements ActionListener {
         frog = _frog.getImage();
     }
 
+    /**
+     * Initializes the game elements and starts the game timer.
+     */
     public void gameInitialize() {
         this.player = new Player();
         this.computers = new ArrayList<>();
@@ -67,6 +114,9 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
     }
 
+    /**
+     * Randomly positions the fruit on the board.
+     */
     public void locateFruit() {
         this.myFruit = new Fruit();
         int r = (int) (Math.random() * RAND_POS);
@@ -75,6 +125,9 @@ public class Board extends JPanel implements ActionListener {
         this.myFruit.setFruitY(r * POINT_SIZE);
     }
 
+    /**
+     * Randomly positions the frog on the board.
+     */
     public void locateFrog() {
         this.myFrong = new Frog();
         int r = (int) (Math.random() * RAND_POS);
@@ -83,6 +136,9 @@ public class Board extends JPanel implements ActionListener {
         this.myFrong.setFrogY(r * POINT_SIZE);
     }
 
+    /**
+     * Positions obstacles on the board.
+     */
     public void locateObstacle() {
         int r = (int) (Math.random() * RAND_POS);
         obstacleX[0] = r * POINT_SIZE;
@@ -93,11 +149,20 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Paints the game elements on the board.
+     * @param g the Graphics object to protect
+     */
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         doDrawing(g);
     }
 
+    /**
+     * Draws the game elements.
+     * @param g the Graphics object to protect
+     */
     public void doDrawing(Graphics g) {
         if (inGame) {
             g.drawImage(fruit, myFruit.getFruitX(), myFruit.getFruitY(), this);
@@ -131,6 +196,10 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Displays the game over message.
+     * @param g the Graphics object to protect
+     */
     public void gameOver(Graphics g) {
         final String message = "Game Over";
         Font messageFont = new Font("Helvetica", Font.BOLD, 14);
@@ -143,6 +212,9 @@ public class Board extends JPanel implements ActionListener {
         addResult.setVisible(true);
     }
 
+    /**
+     * Checks if the player or a computer has collected a fruit.
+     */
     public void checkFruit() {
         if ((player.getX()[0] == myFruit.getFruitX()) && (player.getY()[0] == myFruit.getFruitY())) {
             player.dots++;
@@ -157,6 +229,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks if the player or a computer has collected a frog.
+     */
     public void checkFrog() {
         if ((player.getX()[0] == myFrong.getFrogX()) && (player.getY()[0] == myFrong.getFrogY())) {
             ++player.dots;
@@ -170,6 +245,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks if there is a collision involving the player.
+     */
     private void checkIfCollision() {
         for (int i = player.dots; i > 0; --i) {
             if ((i > 4) && (player.getX()[0] == player.getX()[i]) && (player.getY()[0] == player.getY()[i])) {
@@ -217,6 +295,9 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks for collisions involving the computers.
+     */
     private void checkComputerCollision() {
         for (int i = 0; i < computers.size(); ++i) {
             Computer c1 = computers.get(i);
@@ -245,6 +326,10 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Called every DELAY milliseconds to update the game state.
+     * @param e the ActionEvent triggered by the Timer
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (inGame) {
@@ -282,6 +367,9 @@ public class Board extends JPanel implements ActionListener {
         repaint();
     }
 
+    /**
+     * Handles keyboard input to control the player's direction.
+     */
     private class MyAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
